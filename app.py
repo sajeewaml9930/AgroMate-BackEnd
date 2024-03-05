@@ -20,6 +20,7 @@ ma = Marshmallow(app)
 def app_is_working():  # put application's code here
     return 'AgroMate is Online'
 
+
 # Database
 
 # Create Database
@@ -151,24 +152,31 @@ def farmer(farmer_id):
 # Farmer Registration
 @app.route('/register_farmer', methods=['POST'])
 def register_farmer():
-    data = request.get_json()
-    print(data)
-    name = data['name']
-    area = data['area']
-    password = data['password']
-    ph_number = data['ph_number']
-    status = data['status']
+    name = request.form['name']
+    test = Farmer.query.filter_by(name=name).first()
+    if test:
+        return jsonify(message='That Name already exists.'), 409
+    else:
+        name = request.form['name']
+        area = request.form['area']
+        ph_number = request.form['ph_number']
+        status = request.form['status']
+        password = request.form['password']
+        farmer = Farmer(name=name, area=area, ph_number=ph_number, status=status, password=password)
+        db.session.add(farmer)
+        db.session.commit()
+        return jsonify(message='Registered'), 200
 
     # Check if farmer already exists in the database
-    farmer = Farmer.query.filter_by(ph_number=ph_number).first()
-    if farmer:
-        return jsonify(message='Farmer already exists. Please choose a different name.', status='error'), 409
-    else:
-        # Create a new farmer
-        new_farmer = Farmer(name=name, area=area, ph_number=ph_number, password=password, status=status)
-        db.session.add(new_farmer)
-        db.session.commit()
-        return jsonify(message='Farmer registration successful! Please login.', status='success'), 200
+    # farmer = Farmer.query.filter_by(ph_number=ph_number).first()
+    # if farmer:
+    #     return jsonify(message='Farmer already exists. Please choose a different name.', status='error'), 409
+    # else:
+    #     # Create a new farmer
+    #     new_farmer = Farmer(name=name, area=area, ph_number=ph_number, password=password, status=status)
+    #     db.session.add(new_farmer)
+    #     db.session.commit()
+    #     return jsonify(message='Farmer registration successful! Please login.', status='success'), 200
 
 
 # Farmer Login
@@ -185,9 +193,9 @@ def login():
     if test:
         #access_token = create_access_token(indentity=name)
         id = test.id
-        return jsonify(message="Farmer Login Succeeded!!", id=id), 200
+        return jsonify(message="Farmer Login Succeeded!!", id=id), 201
     else:
-        return jsonify(message="Incorrect userName or password"), 401
+        return jsonify(message="Incorrect Username or Password"), 401
 
 
 # Farmer Add his production weight
