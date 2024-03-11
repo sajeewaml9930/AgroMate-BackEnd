@@ -55,10 +55,12 @@ def db_seed():
                      ph_number="119",
                      password="123",
                      economic_centre="dabulla")
+    o2FProduction =O2FProduction(quantity='100',farmer_id='1')
 
     db.session.add(officer1)
     db.session.add(farmer1)
     db.session.add(reseller1)
+    db.session.add(o2FProduction)
     db.session.commit()
     print("database seeded")
 
@@ -105,6 +107,12 @@ class Production(db.Model):
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'), nullable=False)
 
 
+class O2FProduction(db.Model):
+    __tablename__ = "o2fproduction"
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Float, nullable=True)
+    farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'), nullable=False)
+
 class ProductionSchema(ma.Schema):
     class Meta:
         fields = ('id','date', 'quantity')
@@ -149,11 +157,29 @@ def get_farmers():
     return jsonify(result)
 
 
+@app.route('/o2fProduction/<farmer_id>', methods=['GET'])
+def o2f_production(farmer_id):
+    test = O2FProduction.query.filter_by(id=farmer_id).first()
+    if test:
+        quantity = test.quantity
+        return jsonify({"quantity": quantity}), 201
+    else:
+        return jsonify(message="Error"), 401
+
+
 @app.route('/production/<farmer_id>', methods=['GET'])
 def production(farmer_id):
     production = Production.query.filter_by(farmer_id=farmer_id).all()
     result = production_schema.dump(production)
-    return jsonify(result)
+    test = Farmer.query.filter_by(id=farmer_id).first()
+    if test:
+        name = test.name
+        return jsonify({"result": result, "name": name}), 201
+    else:
+        return jsonify(message="Farmer Login Succeeded!!")
+
+
+
 
 
 @app.route('/farmer/<farmer_id>', methods=['GET'])
