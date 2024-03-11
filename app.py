@@ -10,8 +10,8 @@ app = Flask(__name__)
 CORS(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agromate.db')  # Use SQLite as the database
-app.config['JWT_SECRET_KEY'] = 'super-secret' # change this IRL
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agromate.db')
+app.config['JWT_SECRET_KEY'] = 'super-secret'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
@@ -51,8 +51,14 @@ def db_seed():
                            password = "123"
                            )
 
+    reseller1 = Reseller(name="123",
+                     ph_number="119",
+                     password="123",
+                     economic_centre="dabulla")
+
     db.session.add(officer1)
     db.session.add(farmer1)
+    db.session.add(reseller1)
     db.session.commit()
     print("database seeded")
 
@@ -71,12 +77,22 @@ class Farmer(db.Model):
 
 
 class AgriOfficer(db.Model):
-    __tablename__ = "officer"
+    __tablename__ = "agriofficer"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(120), nullable=False)
     ph_number = db.Column(db.String(80), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class Reseller(db.Model):
+    __tablename__ = "reseller"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    ph_number = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    economic_centre = db.Column(db.String(100), nullable=False)
+
 
     def __repr__(self):
         return f'<AgriOfficer {self.name}>'
@@ -91,7 +107,7 @@ class Production(db.Model):
 
 class ProductionSchema(ma.Schema):
     class Meta:
-        fields = ('id' ,'date', 'quantity')
+        fields = ('id','date', 'quantity')
 
 
 class FarmerSchema(ma.Schema):
@@ -150,8 +166,8 @@ def farmer(farmer_id):
 # Farmer
 
 # Farmer Registration
-@app.route('/register_farmer', methods=['POST'])
-def register_farmer():
+@app.route('/farmer/registration', methods=['POST'])
+def farmer_registration():
     name = request.form['name']
     test = Farmer.query.filter_by(name=name).first()
     if test:
@@ -167,21 +183,10 @@ def register_farmer():
         db.session.commit()
         return jsonify(message='Registered'), 200
 
-    # Check if farmer already exists in the database
-    # farmer = Farmer.query.filter_by(ph_number=ph_number).first()
-    # if farmer:
-    #     return jsonify(message='Farmer already exists. Please choose a different name.', status='error'), 409
-    # else:
-    #     # Create a new farmer
-    #     new_farmer = Farmer(name=name, area=area, ph_number=ph_number, password=password, status=status)
-    #     db.session.add(new_farmer)
-    #     db.session.commit()
-    #     return jsonify(message='Farmer registration successful! Please login.', status='success'), 200
-
 
 # Farmer Login
-@app.route('/farmerlogin', methods=['POST'])
-def login():
+@app.route('/farmer/login', methods=['POST'])
+def farmer_login():
     if request.is_json:
         name = request.json['name']
         password = request.json['password']
@@ -191,7 +196,6 @@ def login():
         password = request.form['password']
     test = Farmer.query.filter_by(name=name, password=password).first()
     if test:
-        #access_token = create_access_token(indentity=name)
         id = test.id
         return jsonify(message="Farmer Login Succeeded!!", id=id), 201
     else:
@@ -209,7 +213,6 @@ def add_production(farmer_id):
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
     except ValueError:
         return jsonify({'error': 'Invalid date format, use YYYY-MM-DD'}), 400
-
     production = Production(date=date, quantity=quantity, farmer=farmer)
     db.session.add(production)
     db.session.commit()
@@ -227,13 +230,10 @@ def update_farmer_status(farmer_id):
     print(new_status)
 
     if test:
-        # Update the status
         print()
-
         test = Farmer.query.get(farmer_id)
         test.status = new_status
         db.session.commit()
-
         return jsonify({'message': 'Farmer status updated successfully'})
     else:
         return jsonify({'error': 'Farmer not found'}), 404
@@ -242,41 +242,76 @@ def update_farmer_status(farmer_id):
 # Agriculture Officer
 
 # Agriculture Officer Login
-@app.route('/agriofficerlogin', methods=['POST'])
-def officer_login():
+@app.route('/agriofficer/login', methods=['POST'])
+def agriofficer_login():
     if request.is_json:
         name = request.json['name']
         password = request.json['password']
-        print(name)
     else:
         name = request.form['name']
         password = request.form['password']
 
     test = AgriOfficer.query.filter_by(name=name, password=password).first()
     if test:
-        #access_token = create_access_token(indentity=name)
-        return jsonify(message="Officer Login Succeeded!!"), 200
+        return jsonify(message="Officer Login Succeeded!!"), 201
     else:
-        return jsonify(message="Bad userName or password"), 401
+        return jsonify(message="Incorrect userName or password"), 401
 
 
 # Agriculture Officer Registration
-@app.route('/register_officer')
-def register_officer():
-    data = request.get_json()
-    name = data['name']
-    password = data['password']
-    ph_number = data['ph_number']
-    # Check if farmer already exists in the database
-    officer = AgriOfficer.query.filter_by(ph_number=ph_number).first()
-    if officer:
-        return jsonify(message='Farmer already exists. Please choose a different name.', status='error'), 409
+
+@app.route('/agriofficer/registration', methods=['POST'])
+def agriofficer_registration():
+    name = request.form['name']
+    test = AgriOfficer.query.filter_by(name=name).first()
+    if test:
+        return jsonify(message='That Name already exists.'), 409
     else:
-        # Create a new farmer
-        new_officer = AgriOfficer(name=name, ph_number=ph_number, password=password)
-        db.session.add(new_officer)
+        name = request.form['name']
+        ph_number = request.form['ph_number']
+        password = request.form['password']
+        agriofficer = AgriOfficer(name=name, ph_number=ph_number, password=password)
+        db.session.add(agriofficer)
         db.session.commit()
-        return jsonify(message='Farmer registration successful! Please login.', status='success'), 201
+        return jsonify(message='Registered'), 201
+
+
+# Reseller
+
+# Reseller Login
+@app.route('/reseller/login', methods=['POST'])
+def reseller_login():
+    if request.is_json:
+        name = request.json['name']
+        password = request.json['password']
+    else:
+        name = request.form['name']
+        password = request.form['password']
+    test = Reseller.query.filter_by(name=name, password=password).first()
+    if test:
+        id = test.id
+        return jsonify(message="Reseller Login Succeeded!!", id=id), 201
+    else:
+        return jsonify(message="Incorrect Username or Password"), 401
+
+
+# Reseller Registration
+
+@app.route('/reseller/registration', methods=['POST'])
+def reseller_registration():
+    name = request.form['name']
+    test = Reseller.query.filter_by(name=name).first()
+    if test:
+        return jsonify(message='That Name already exists.'), 401
+    else:
+        name = request.form['name']
+        ph_number = request.form['ph_number']
+        password = request.form['password']
+        economic_centre = request.form['economic_centre']
+        reseller = Reseller(name=name, ph_number=ph_number, password=password, economic_centre=economic_centre)
+        db.session.add(reseller)
+        db.session.commit()
+        return jsonify(message='Registered'), 201
 
 
 if __name__ == '__main__':
