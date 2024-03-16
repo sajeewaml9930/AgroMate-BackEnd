@@ -1,69 +1,114 @@
-    <h1>AgroMate</h1>
+```
+______ _     _       _     _                
+|  _  (_)   (_)     | |   (_)               
+| | | |_ ___ _ _ __ | |__  _ _ __ ___   __ _ 
+| | | | / __| | '_ \| '_ \| | '_ ` _ \ / _` |
+| |/ /| \__ \ | |_) | | | | | | | | | | (_| |
+|___/ |_|___/_| .__/|_| |_|_|_| |_| |_|\__,_|
+              | |                           
+              |_|                           
 
-    <p>AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.</p>
+AgroMate
+========
 
-    <h2>Table of Contents</h2>
+AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.
 
-    <ul>
-        <li><a href="#installation">Installation</a></li>
-        <li><a href="#usage">Usage</a></li>
-        <li><a href="#database-management">Database Management</a></li>
-        <li><a href="#endpoints">Endpoints</a></li>
-        <li><a href="#contributing">Contributing</a></li>
-        <li><a href="#license">License</a></li>
-    </ul>
+## Table of Contents
 
-    <h2 id="installation">Installation</h2>
+- [Installation](#installation)
+- [Usage](#usage)
+- [Database Management](#database-management)
+- [Endpoints](#endpoints)
+- [Contributing](#contributing)
+- [License](#license)
 
-    <ol>
-        <li>Clone the repository:</li>
-        <code>git clone https://github.com/your_username/agromate.git</code>
+## Installation
 
-        <li>Navigate into the project directory:</li>
-        <code>cd agromate</code>
+1. **Clone the repository:**
 
-        <li>Install dependencies:</li>
-        <code>pip install -r requirements.txt</code>
-    </ol>
+   ```
+   git clone https://github.com/your_username/agromate.git
+   ```
 
-    <h2 id="usage">Usage</h2>
+2. **Navigate into the project directory:**
 
-    <ol>
-        <li>Set up the Flask application:</li>
-        <pre><code>export FLASK_APP=app.py
-export FLASK_ENV=development</code></pre>
+   ```
+   cd agromate
+   ```
 
-        <li>Initialize the database:</li>
-        <code>flask db_create</code>
+3. **Install dependencies:**
 
-        <li>Seed the database with initial data:</li>
-        <code>flask db_seed</code>
+   ```
+   pip install -r requirements.txt
+   ```
 
-        <li>Run the application:</li>
-        <code>flask run</code>
-    </ol>
+## Usage
 
-    <h2 id="database-management">Database Management</h2>
+1. **Set up the Flask application:**
 
-    <ul>
-        <li>To create the database tables:</li>
-        <code>flask db_create</code>
+   ```
+   export FLASK_APP=app.py
+   export FLASK_ENV=development
+   ```
 
-        <li>To drop the database tables:</li>
-        <code>flask db_drop</code>
+2. **Initialize the database:**
 
-        <li>To seed the database with initial data:</li>
-        <code>flask db_seed</code>
-    </ul>
+   ```
+   flask db_create
+   ```
 
-    <h2 id="endpoints">Endpoints</h2>
+3. **Seed the database with initial data:**
 
-    <p>Refer to the code comments or documentation for detailed information about each endpoint.</p>
+   ```
+   flask db_seed
+   ```
 
-    <h2 id="contributing">Contributing</h2>
+4. **Run the application:**
 
-    <p>Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request.</p>
+   ```
+   flask run
+   ```
 
-    <h2 id="license">License</h2>
+## Database Management
 
-    <p>This project is licensed under the <a href="LICENSE">MIT License</a>.</p>
+- **To create the database tables:**
+
+  ```
+  flask db_create
+  ```
+
+- **To drop the database tables:**
+
+  ```
+  flask db_drop
+  ```
+
+- **To seed the database with initial data:**
+
+  ```
+  flask db_seed
+  ```
+
+## Endpoints
+
+- **GET /farmers:** Get all farmers with their last production data.
+- **GET /o2fProduction/<farmer_id>:** Get O2F production data for a specific farmer.
+- **GET /production/<farmer_id>:** Get production data for a specific farmer.
+- **GET /farmer/<farmer_id>:** Get details of a specific farmer.
+- **POST /farmer/registration:** Register a new farmer.
+- **POST /farmer/login:** Login as a farmer.
+- **POST /farmers/<farmer_id>/productions:** Add production weight for a farmer.
+- **PUT /update_farmers_status/<farmer_id>:** Update status of a farmer.
+- **POST /agriofficer/registration:** Register a new agriculture officer.
+- **POST /agriofficer/login:** Login as an agriculture officer.
+- **POST /reseller/registration:** Register a new reseller.
+- **POST /reseller/login:** Login as a reseller.
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request.
+
+## License
+
+This project is licensed under the MIT License.
+```
