@@ -1,82 +1,91 @@
-AgroMate
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroMate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        ul li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>AgroMate</h1>
+    <p>AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.</p>
 
-AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.
+    <h2>Table of Contents</h2>
+    <ul>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#usage">Usage</a></li>
+        <li><a href="#database-management">Database Management</a></li>
+        <li><a href="#endpoints">Endpoints</a></li>
+        <li><a href="#contributing">Contributing</a></li>
+        <li><a href="#license">License</a></li>
+    </ul>
 
-Table of Contents
+    <h2 id="installation">Installation</h2>
+    <pre><code>git clone https://github.com/your_username/agromate.git
+cd agromate
+pip install -r requirements.txt
+export FLASK_APP=app.py
+export FLASK_ENV=development
+flask db_create
+flask db_seed
+flask run</code></pre>
 
-- Installation
-- Usage
-- Database Management
-- Endpoints
-- Contributing
-- License
+    <h2 id="usage">Usage</h2>
+    <p>Set up the Flask application and run the commands as described in the Installation section.</p>
 
-Installation
+    <h2 id="database-management">Database Management</h2>
+    <ul>
+        <li>To create the database tables: <code>flask db_create</code></li>
+        <li>To drop the database tables: <code>flask db_drop</code></li>
+        <li>To seed the database with initial data: <code>flask db_seed</code></li>
+    </ul>
 
-1. Clone the repository:
+    <!-- Add more sections as needed -->
 
-   git clone https://github.com/sajeewaml9930/agromate.git
+    <h2 id="endpoints">Endpoints</h2>
+    <p>Refer to the source code for detailed endpoint documentation.</p>
 
-2. Navigate into the project directory:
+    <h2 id="contributing">Contributing</h2>
+    <p>Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request.</p>
 
-   cd agromate
-
-3. Install dependencies:
-
-   pip install -r requirements.txt
-
-Usage
-
-1. Set up the Flask application:
-
-   export FLASK_APP=app.py
-   export FLASK_ENV=development
-
-2. Initialize the database:
-
-   flask db_create
-
-3. Seed the database with initial data:
-
-   flask db_seed
-
-4. Run the application:
-
-   flask run
-
-Database Management
-
-- To create the database tables:
-
-  flask db_create
-
-- To drop the database tables:
-
-  flask db_drop
-
-- To seed the database with initial data:
-
-  flask db_seed
-
-Endpoints
-
-- GET /farmers: Get all farmers with their last production data.
-- GET /o2fProduction/<farmer_id>: Get O2F production data for a specific farmer.
-- GET /production/<farmer_id>: Get production data for a specific farmer.
-- GET /farmer/<farmer_id>: Get details of a specific farmer.
-- POST /farmer/registration: Register a new farmer.
-- POST /farmer/login: Login as a farmer.
-- POST /farmers/<farmer_id>/productions: Add production weight for a farmer.
-- PUT /update_farmers_status/<farmer_id>: Update status of a farmer.
-- POST /agriofficer/registration: Register a new agriculture officer.
-- POST /agriofficer/login: Login as an agriculture officer.
-- POST /reseller/registration: Register a new reseller.
-- POST /reseller/login: Login as a reseller.
-
-Contributing
-
-Contributions are welcome! If you'd like to contribute to this project, please fork the repository and submit a pull request.
-
-License
-
-This project is licensed under the MIT License.
+    <h2 id="license">License</h2>
+    <p>This project is licensed under the <a href="#">MIT License</a>.</p>
+</body>
+</html>
