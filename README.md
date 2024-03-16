@@ -1,6 +1,6 @@
 <h1>AgroMate</h1>
 
-    <p>AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.</p>
+<h2>AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.</h2>
                                                                       
 ```
 
