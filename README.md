@@ -2,7 +2,7 @@
 
 AgroMate is an application built with Flask for managing agricultural data including farmer information, production data, and more.
                                                                       
-```
+
 
 Installation
 
