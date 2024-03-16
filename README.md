@@ -15,7 +15,7 @@ Installation
 
 1. Clone the repository:
 
-   git clone https://github.com/your_username/agromate.git
+   git clone https://github.com/sajeewaml9930/agromate.git
 
 2. Navigate into the project directory:
 
