@@ -1,7 +1,3 @@
-Certainly! Here's an updated version with a more attractive format:
-
-```
-
  █████╗  ██████╗ ██████╗  ██████╗ ███╗   ███╗ █████╗ ████████╗███████╗
 ██╔══██╗██╔════╝ ██╔══██╗██╔═══██╗████╗ ████║██╔══██╗╚══██╔══╝██╔════╝
 ███████║██║  ███╗██████╔╝██║   ██║██╔████╔██║███████║   ██║   █████╗  
@@ -9,7 +5,7 @@ Certainly! Here's an updated version with a more attractive format:
 ██║  ██║╚██████╔╝██║  ██║╚██████╔╝██║ ╚═╝ ██║██║  ██║   ██║   ███████╗
 ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
                                                                       
-
+```
 
 Installation
 
@@ -101,5 +97,3 @@ License
 
 This project is licensed under the MIT License.
 ```
-
-You can copy and paste this into a text file named `README.txt`.
