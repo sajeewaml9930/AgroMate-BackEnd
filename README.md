@@ -9,7 +9,7 @@ Installation
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/sajeewaml9930/agromate.git
+   https://github.com/sajeewaml9930/AgroMate-BackEnd.git
    ```
 
 2. Navigate into the project directory:
