@@ -329,6 +329,55 @@ def agriofficer_registration():
         db.session.commit()
         return jsonify(message='Registered'), 201
 
+@app.route('/o2f_production/add', methods=['POST'])
+def add_o2f_production():
+    if request.method == 'POST':
+        # Parse the request data
+        data = request.json
+        quantity = data.get('quantity')
+        farmer_id = data.get('farmer_id')
+
+        # Check if the farmer exists
+        farmer = Farmer.query.get(farmer_id)
+        if not farmer:
+            return jsonify({'error': 'Farmer not found'}), 404
+
+        # Create a new O2FProduction instance
+        o2f_production = O2FProduction(quantity=quantity, farmer_id=farmer_id)
+
+        # Add the new instance to the session and commit
+        db.session.add(o2f_production)
+        db.session.commit()
+
+        return jsonify({'message': 'Send successfully'}), 201
+    else:
+        return jsonify({'error': 'Invalid request method'}), 405
+
+
+@app.route('/o2r_resell_detail/add', methods=['POST'])
+def add_o2r_resell_detail():
+    if request.method == 'POST':
+        # Parse the request data
+        data = request.json
+        quantity = data.get('quantity')
+        price = data.get('price')
+        reseller_id = data.get('reseller_id')
+
+        # Check if the reseller exists
+        reseller = Reseller.query.get(reseller_id)
+        if not reseller:
+            return jsonify({'error': 'Reseller not found'}), 404
+
+        # Create a new O2RResellDetail instance
+        o2r_resell_detail = O2RResellDetail(quantity=quantity, price=price, reseller_id=reseller_id)
+
+        # Add the new instance to the session and commit
+        db.session.add(o2r_resell_detail)
+        db.session.commit()
+
+        return jsonify({'message': 'Send successfully '}), 201
+    else:
+        return jsonify({'error': 'Invalid request method'}), 405
 
 # Reseller
 
