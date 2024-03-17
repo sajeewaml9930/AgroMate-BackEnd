@@ -56,11 +56,13 @@ def db_seed():
                      password="123",
                      economic_centre="dabulla")
     o2FProduction =O2FProduction(quantity='100',farmer_id='1')
+    o2r = O2RResellDetail(reseller_id='1', quantity='1022', price='1313')
 
     db.session.add(officer1)
     db.session.add(farmer1)
     db.session.add(reseller1)
     db.session.add(o2FProduction)
+    db.session.add(o2r)
     db.session.commit()
     print("database seeded")
 
@@ -94,6 +96,7 @@ class Reseller(db.Model):
     ph_number = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(120), nullable=False)
     economic_centre = db.Column(db.String(100), nullable=False)
+    resellDetail = db.relationship('ResellDetail', backref='reseller', lazy=True)
 
 
     def __repr__(self):
@@ -107,15 +110,37 @@ class Production(db.Model):
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'), nullable=False)
 
 
+class ResellDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=True)
+    quantity = db.Column(db.Float, nullable=True)
+    price = db.Column(db.String, nullable=True)
+    reseller_id = db.Column(db.Integer, db.ForeignKey('reseller.id'), nullable=False)
+
+
 class O2FProduction(db.Model):
     __tablename__ = "o2fproduction"
     id = db.Column(db.Integer, primary_key=True)
     quantity = db.Column(db.Float, nullable=True)
     farmer_id = db.Column(db.Integer, db.ForeignKey('farmer.id'), nullable=False)
 
+
+class O2RResellDetail(db.Model):
+    __tablename__ = "o2rreselldetail"
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Float, nullable=True)
+    price = db.Column(db.String, nullable=True)
+    reseller_id = db.Column(db.Integer, db.ForeignKey('reseller.id'), nullable=False)
+
+
 class ProductionSchema(ma.Schema):
     class Meta:
-        fields = ('id','date', 'quantity')
+        fields = ('id', 'date', 'quantity')
+
+
+class ResellDetailSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'date', 'quantity', 'price')
 
 
 class FarmerSchema(ma.Schema):
@@ -123,12 +148,18 @@ class FarmerSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'area', 'status')
 
+class ResellerSchema(ma.Schema):
+    resellDetail = ma.Nested(ResellDetailSchema, many=True)
+    class Meta:
+        fields = ('id', 'date', 'quantity', 'price')
+
 
 farmer_schema = FarmerSchema()
 farmers_schema = FarmerSchema(many=True)
 
 farmer_production = Production()
 production_schema = ProductionSchema(many=True)
+resellDetail_schema = ResellerSchema(many=True)
 
 
 @app.route('/farmers', methods=['GET'])
@@ -177,9 +208,6 @@ def production(farmer_id):
         return jsonify({"result": result, "name": name}), 201
     else:
         return jsonify(message="Farmer Login Succeeded!!")
-
-
-
 
 
 @app.route('/farmer/<farmer_id>', methods=['GET'])
@@ -338,6 +366,48 @@ def reseller_registration():
         db.session.add(reseller)
         db.session.commit()
         return jsonify(message='Registered'), 201
+
+
+@app.route('/reseller/<int:reseller_id>/resellDetail', methods=['POST'])
+def add_resell_detail(reseller_id):
+    reseller = Reseller.query.get_or_404(reseller_id)
+    data = request.json
+    date_str = data['date']
+    quantity = data['quantity']
+    price = data['price']
+    try:
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'error': 'Invalid date format, use YYYY-MM-DD'}), 400
+    resellDetail = ResellDetail(date=date, quantity=quantity, reseller=reseller, price=price)
+    db.session.add(resellDetail)
+    db.session.commit()
+
+    return jsonify({'success': 'Production added successfully'}), 201
+
+
+@app.route('/reseller/reselldetail/<reseller_id>', methods=['GET'])
+def resellDetail(reseller_id):
+    resellDetail = ResellDetail.query.filter_by(reseller_id=reseller_id).all()
+    result = resellDetail_schema.dump(resellDetail)
+    test = Reseller.query.filter_by(id=reseller_id).first()
+    if test:
+        name = test.name
+        return jsonify({"result": result, "name": name}), 201
+    else:
+        return jsonify(message="Reseller Login Succeeded!!")
+
+
+@app.route('/o2r/<reseller_id>', methods=['GET'])
+def O2R(reseller_id):
+    test = O2RResellDetail.query.filter_by(reseller_id=reseller_id).order_by(O2RResellDetail.id.desc()).first()
+    if test:
+        quantity = test.quantity
+        price = test.price
+        return jsonify({"quantity": quantity, "price": price}), 201
+    else:
+        return jsonify(message="Error"), 401
+
 
 
 if __name__ == '__main__':
