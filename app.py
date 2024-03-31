@@ -4,7 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 from flask_marshmallow import Marshmallow
-import joblib
+from joblib import load
+import pandas as pd
+import numpy as np
+
+
+with open('new_best_model.joblib', 'rb') as f:
+    best_model = load(f, mmap_mode=None)
 
 app = Flask(__name__)
 CORS(app)
@@ -457,6 +463,28 @@ def O2R(reseller_id):
     else:
         return jsonify(message="Error"), 401
 
+
+@app.route('/predict', methods=['POST'])
+def get_prediction():
+    # Get data from the request
+    data = request.get_json()
+    date_to_test = data['date']  # Assuming 'date' is the key for the date input
+
+    # Preprocess the input date
+    timestamp_to_test = pd.to_datetime(date_to_test).timestamp()
+
+    # Predict using the trained model
+    forecast_result = best_model.predict(np.array([[timestamp_to_test]]))
+
+    # Format the prediction result
+    prediction = {
+        "Ash_Plantain_LCVEG_1kg": forecast_result[0][0],
+        "Production": forecast_result[0][1],
+        "Resell_weight": forecast_result[0][2]
+    }
+
+    # Return the prediction as JSON
+    return jsonify(prediction)
 
 
 if __name__ == '__main__':
